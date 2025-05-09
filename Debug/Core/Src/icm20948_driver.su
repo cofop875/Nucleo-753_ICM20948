@@ -1,0 +1,14 @@
+../Core/Src/icm20948_driver.c:43:6:ICM20948_CS_Select	8	static
+../Core/Src/icm20948_driver.c:52:6:ICM20948_CS_Deselect	8	static
+../Core/Src/icm20948_driver.c:64:19:ICM20948_WriteByte	24	static
+../Core/Src/icm20948_driver.c:81:19:ICM20948_ReadByte	32	static
+../Core/Src/icm20948_driver.c:101:19:ICM20948_ReadBytes	24	static
+../Core/Src/icm20948_driver.c:118:19:ICM20948_SelectUserBank	16	static
+../Core/Src/icm20948_driver.c:129:19:AK09916_WriteByteViaICM	24	static
+../Core/Src/icm20948_driver.c:165:19:AK09916_ReadByteViaICM	24	static
+../Core/Src/icm20948_driver.c:194:19:ICM20948_Init	16	static
+../Core/Src/icm20948_driver.c:327:19:ICM20948_ReadAccelGyroRaw	32	static
+../Core/Src/icm20948_driver.c:356:19:ICM20948_ReadMagRaw	24	static
+../Core/Src/icm20948_driver.c:395:6:ICM20948_ConvertAccelRawToG	16	static
+../Core/Src/icm20948_driver.c:404:6:ICM20948_ConvertGyroRawToDps	16	static
+../Core/Src/icm20948_driver.c:413:6:ICM20948_ConvertMagRawToUT	16	static

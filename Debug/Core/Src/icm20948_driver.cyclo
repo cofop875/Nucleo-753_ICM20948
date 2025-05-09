@@ -1,0 +1,14 @@
+../Core/Src/icm20948_driver.c:43:6:ICM20948_CS_Select	1
+../Core/Src/icm20948_driver.c:52:6:ICM20948_CS_Deselect	1
+../Core/Src/icm20948_driver.c:64:19:ICM20948_WriteByte	1
+../Core/Src/icm20948_driver.c:81:19:ICM20948_ReadByte	2
+../Core/Src/icm20948_driver.c:101:19:ICM20948_ReadBytes	2
+../Core/Src/icm20948_driver.c:118:19:ICM20948_SelectUserBank	2
+../Core/Src/icm20948_driver.c:129:19:AK09916_WriteByteViaICM	6
+../Core/Src/icm20948_driver.c:165:19:AK09916_ReadByteViaICM	6
+../Core/Src/icm20948_driver.c:194:19:ICM20948_Init	28
+../Core/Src/icm20948_driver.c:327:19:ICM20948_ReadAccelGyroRaw	3
+../Core/Src/icm20948_driver.c:356:19:ICM20948_ReadMagRaw	3
+../Core/Src/icm20948_driver.c:395:6:ICM20948_ConvertAccelRawToG	2
+../Core/Src/icm20948_driver.c:404:6:ICM20948_ConvertGyroRawToDps	2
+../Core/Src/icm20948_driver.c:413:6:ICM20948_ConvertMagRawToUT	2
