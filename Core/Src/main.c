@@ -101,16 +101,15 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-  int WWE = 0;
-  printf("ICM-20948 Test Program\r\n");
-
-    // Initialize ICM-20948
-    if (ICM20948_Init() == HAL_OK) {
-      printf("ICM-20948 Initialization OK\r\n");
-    } else {
-      printf("ICM-20948 Initialization FAILED\r\n");
-      Error_Handler();
-    }
+ 	int WWE = 0;
+	  printf("ICM-20948 Test Program Init\r\n");
+	// Initialize ICM-20948
+	if (ICM20948_Init() == HAL_OK) {
+	  printf("ICM-20948 Initialization OK\r\n");
+	} else {
+	  printf("ICM-20948 Initialization FAILED\r\n");
+	  Error_Handler();
+	}
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -120,34 +119,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  // Read raw sensor data
-	      if (ICM20948_ReadAccelGyroRaw(accel_raw, gyro_raw) == HAL_OK) {
-	          // Accelerometer and Gyroscope data is now in accel_raw and gyro_raw
-	          ICM20948_ConvertAccelRawToG();
-	          ICM20948_ConvertGyroRawToDps();
+	  ICM20948_Main();
 
-	          printf("Accel (g):  X=%.2f, Y=%.2f, Z=%.2f\r\n", accel_g[0], accel_g[1], accel_g[2]);
-	          // printf("Accel RAW:  X=%d, Y=%d, Z=%d\r\n", accel_raw[0], accel_raw[1], accel_raw[2]);
-	          printf("Gyro (dps): X=%.2f, Y=%.2f, Z=%.2f\r\n", gyro_dps[0], gyro_dps[1], gyro_dps[2]);
-	          // printf("Gyro RAW:   X=%d, Y=%d, Z=%d\r\n", gyro_raw[0], gyro_raw[1], gyro_raw[2]);
 
-	      } else {
-	          printf("Failed to read Accel/Gyro data\r\n");
-	      }
-
-	      if (ICM20948_ReadMagRaw(mag_raw) == HAL_OK) {
-	          // Magnetometer data is now in mag_raw
-	          ICM20948_ConvertMagRawToUT();
-
-	          printf("Mag (uT):   X=%.2f, Y=%.2f, Z=%.2f\r\n", mag_uT[0], mag_uT[1], mag_uT[2]);
-	          // printf("Mag RAW:    X=%d, Y=%d, Z=%d\r\n", mag_raw[0], mag_raw[1], mag_raw[2]);
-
-	      } else {
-	          printf("Failed to read Magnetometer data\r\n");
-	      }
-
-	      printf("-------------------------------------\r\n");
-	      HAL_Delay(500); // Read and print data every 500ms
 
 
 
@@ -242,8 +216,8 @@ static void MX_SPI1_Init(void)
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
