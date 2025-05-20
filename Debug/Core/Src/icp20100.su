@@ -1,0 +1,5 @@
+../Core/Src/icp20100.c:19:31:icp20100_read_register	40	static
+../Core/Src/icp20100.c:33:31:icp20100_write_register	32	static
+../Core/Src/icp20100.c:48:31:icp20100_read_burst	40	static
+../Core/Src/icp20100.c:62:24:icp20100_init	24	static
+../Core/Src/icp20100.c:178:24:icp20100_get_pressure_temp	40	static

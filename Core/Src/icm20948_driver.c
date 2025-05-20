@@ -208,7 +208,7 @@ HAL_StatusTypeDef AK09916_WriteByteViaICM(uint8_t reg_addr, uint8_t data) {
     //    ICM20948 datasheet 7.6節: "The I2C Master interface issues a STOP condition specific to the transaction length."
     //    "The I2C Master interface will stretch the main processor’s clock when an I2C transaction is in progress." (if I2C_MST_P_NSR=1 in I2C_MST_CTRL)
     //    這裡假設 I2C_MST_P_NSR=0 (預設)，所以需要軟體延遲或狀態檢查。
-    HAL_Delay(5); // 稍微增加延遲以確保傳輸完成 (這個延遲可能需要調整，取決於 I2C 速度和目標設備)
+    HAL_Delay(20); // 稍微增加延遲以確保傳輸完成 (這個延遲可能需要調整，取決於 I2C 速度和目標設備)
 
     // 7. (可選) 檢查傳輸狀態，例如 I2C_MST_STATUS 中的 I2C_SLV0_NACK 位元
     //    status = ICM20948_SelectUserBank(0); // 為了讀 I2C_MST_STATUS，它在 User Bank 0
@@ -377,7 +377,8 @@ HAL_StatusTypeDef ICM20948_Init(void) {
     uint8_t user_ctrl_val;
     status = ICM20948_ReadByte(ICM20948_USER_CTRL, &user_ctrl_val);
     if (status != HAL_OK) return HAL_ERROR;
-    user_ctrl_val |= (1 << 5); // 設定 I2C_MST_EN = 1
+    user_ctrl_val |= (1 << 5); // 設定 I2C_MST_EN = 1 (啟用 I2C Master)
+    user_ctrl_val |= (1 << 4); // 設定 I2C_IF_DIS = 1 (為 SPI 模式禁用 ICM 的 I2C Slave 介面)
     // user_ctrl_val &= ~(1 << 6); // 確保 I2C_IF_DIS = 0, 使能SPI和I2C同時工作 (如果需要SPI訪問ICM本身)
     status = ICM20948_WriteByte(ICM20948_USER_CTRL, user_ctrl_val);
     if (status != HAL_OK) return HAL_ERROR;
@@ -400,19 +401,19 @@ HAL_StatusTypeDef ICM20948_Init(void) {
 
     // --- 6. 初始化 AK09916 磁力計 ---
     // 檢查 AK09916 WIA2 (公司識別碼)
-    status = AK09916_ReadByteViaICM(AK09916_WIA2, &ak09916_wia2_val);
-    if (status != HAL_OK || ak09916_wia2_val != 0x09) { // 0x09 是 AK09916 的預期公司 ID (AKM)
-        // 有時 WIA1 (0x00) 讀出來是 0x48 (Device ID)
-        // uint8_t wia1_val;
-        // AK09916_ReadByteViaICM(0x00, &wia1_val);
-        // if (wia1_val != 0x48) return HAL_ERROR; // 備用檢查
-        return HAL_ERROR; // AK09916 識別失敗
-    }
+//    status = AK09916_ReadByteViaICM(AK09916_WIA2, &ak09916_wia2_val);
+//    if (status != HAL_OK || ak09916_wia2_val != 0x09) { // 0x09 是 AK09916 的預期公司 ID (AKM)
+//        // 有時 WIA1 (0x00) 讀出來是 0x48 (Device ID)
+////         uint8_t wia1_val;
+////         AK09916_ReadByteViaICM(0x00, &wia1_val);
+////         if (wia1_val != 0x48) return HAL_ERROR; // 備用檢查
+//        return HAL_ERROR; // AK09916 識別失敗
+//    }
 
-    // 軟復位 AK09916 (CNTL3 的 SRST 位元 (bit 0) 設為 1)
-    status = AK09916_WriteByteViaICM(AK09916_CNTL3, 0x01);
-    if (status != HAL_OK) return HAL_ERROR;
-    HAL_Delay(100); // 等待復位完成 (AK09916 datasheet: At least 1ms after SRST bit is set to “1”.)
+//    // 軟復位 AK09916 (CNTL3 的 SRST 位元 (bit 0) 設為 1)
+//    status = AK09916_WriteByteViaICM(AK09916_CNTL3, 0x01);
+//    if (status != HAL_OK) return HAL_ERROR;
+//    HAL_Delay(100); // 等待復位完成 (AK09916 datasheet: At least 1ms after SRST bit is set to “1”.)
 
     // 設定 AK09916 操作模式 (CNTL2)
     // MODE[4:0]:
@@ -423,9 +424,9 @@ HAL_StatusTypeDef ICM20948_Init(void) {
     // 00110: Continuous measurement mode 3 (50Hz)
     // 01000: Continuous measurement mode 4 (100Hz)
     // 這裡設定為連續量測模式 4 (100Hz) -> 0x08
-    status = AK09916_WriteByteViaICM(AK09916_CNTL2, 0x08);
-    if (status != HAL_OK) return HAL_ERROR;
-    HAL_Delay(50); // 等待模式設定生效
+//    status = AK09916_WriteByteViaICM(AK09916_CNTL2, 0x08);
+//    if (status != HAL_OK) return HAL_ERROR;
+//    HAL_Delay(50); // 等待模式設定生效
 
     // --- 7. 配置中斷 (可選，若需要資料就緒中斷) ---
     // 切換到 User Bank 0
@@ -435,7 +436,47 @@ HAL_StatusTypeDef ICM20948_Init(void) {
     // if (status != HAL_OK) return HAL_ERROR;
     // status = ICM20948_WriteByte(ICM20948_INT_ENABLE_1, 0x01); // Enable Raw Data Ready interrupt (RAW_RDY_EN bit 0)
     // if (status != HAL_OK) return HAL_ERROR;
+//    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // ... (ICM I2C Master 設定完成後)
 
+    // --- 6. 初始化 AK09916 磁力計 ---
+    // **先嘗試軟復位 AK09916**
+    status = AK09916_WriteByteViaICM(AK09916_CNTL3, 0x01);
+    if (status != HAL_OK) {
+        printf("AK09916 Soft Reset FAILED!\r\n");
+        ICM20948_SelectUserBank(0); // 切回 UB0
+        return HAL_ERROR;
+    }
+    HAL_Delay(100); // 等待復位完成
+
+    // **(可選) 嘗試設定一個基本的操作模式，例如 Power-down 或 Single measurement**
+    // status = AK09916_WriteByteViaICM(AK09916_CNTL2, 0x00); // Power-down
+    // if (status != HAL_OK) { /* 錯誤處理 */ }
+    // HAL_Delay(10);
+
+    // **然後再檢查 AK09916 WIA2**
+    status = AK09916_ReadByteViaICM(AK09916_WIA2, &ak09916_wia2_val);
+    if (status != HAL_OK) {
+        printf("Reading AK09916 WIA2 FAILED after reset! Status: %d\r\n", status);
+        ICM20948_SelectUserBank(0);
+        return HAL_ERROR;
+    }
+    if (ak09916_wia2_val != 0x09) {
+        printf("AK09916 WIA2 is 0x%02X, expected 0x09, after reset!\r\n", ak09916_wia2_val);
+        ICM20948_SelectUserBank(0);
+        return HAL_ERROR; // AK09916 識別失敗
+    }
+    printf("AK09916 WIA2 OK: 0x%02X\r\n", ak09916_wia2_val);
+
+    // **如果 WIA2 正確，再設定最終的操作模式**
+    status = AK09916_WriteByteViaICM(AK09916_CNTL2, 0x08); // 例如連續量測模式 4 (100Hz)
+    if (status != HAL_OK) {
+        printf("Setting AK09916 Mode FAILED!\r\n");
+        ICM20948_SelectUserBank(0);
+        return HAL_ERROR;
+    }
+    HAL_Delay(50); // 等待模式設定生效
+    //    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     return HAL_OK; // 初始化成功
 }
 

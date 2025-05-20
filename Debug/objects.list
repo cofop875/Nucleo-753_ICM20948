@@ -1,4 +1,5 @@
 "./Core/Src/icm20948_driver.o"
+"./Core/Src/icp20100.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32h7xx_hal_msp.o"
 "./Core/Src/stm32h7xx_it.o"
